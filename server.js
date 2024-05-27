@@ -14,7 +14,10 @@ const port = process.env.PORT || 5060
 // get all Todos from DB
 app.get('/todos', async (req, res) => {
   try {
-    const todos = await Todo.find().limit(10).skip(1)
+    const { title } = req.query
+    const todos = await Todo.find({
+      title: { $regex: new RegExp(title, 'i') },
+    }).sort('id')
     res.json(todos)
   } catch (error) {
     res.status(500).json({ message: error.message })
